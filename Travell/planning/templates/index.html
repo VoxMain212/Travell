@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block content %}
+<main>
+    <div id="hello-block">
+        <section class="welcome-section"
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 60px 20px; font-family: 'Arial', sans-serif;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Добро пожаловать в TravelPlanner!</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto 20px;">
+                Планируйте свои путешествия легко и с удовольствием. Выбирайте направления, составляйте маршруты и
+                создавайте незабываемые воспоминания.
+            </p>
+            <a href="#plan-trip"
+                style="background-color: #ff9d00; color: white; padding: 12px 24px; text-decoration: none; border-radius: 30px; font-weight: bold; display: inline-block; margin-top: 10px; transition: background-color 0.3s;">
+                Начать планирование
+            </a>
+        </section>
+    </div>
+    <div id="block-planner">
+        <h1>Создайте свой план путешествий</h1>
+        {% if travells %}
+            <div>
+
+            </div>
+        {% else %}
+            <div>
+                У вас пока нет путешествий
+            </div>
+        {% endif %}
+        <h1>Создайте свое путешествие</h1>
+        <form action="#">
+            <input type="text" placeholder="Название">
+            <input type="text" placeholder="Пункт назначения">
+            <label for="planner-data">Дата путешествия</label>
+            <input name="planner-data" type="data">
+            <label for="planner-price">Стоимость путешествия</label>
+            <input name="planner-price" type="number" min="0" placeholder="50000">
+            <button>
+                Создайть путешествие
+            </button>
+        </form>
+    </div>
+</main>
+{% endblock %}
