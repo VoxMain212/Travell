@@ -1,0 +1,62 @@
+:root {
+    
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    width: 100%;
+}
+
+#block-planner {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#block-planner > * {
+    margin: 30px;
+    flex-grow: 1;
+    border: 2px solid #667eea;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 0px 20px #0000006b;
+}
+
+label {
+    font-weight: 900;
+    font-size: 32px;
+
+}
+
+input {
+    font-size: large;
+    border: none;
+    border-bottom: 2px solid gray;
+    padding: 5px;
+    outline: none;
+}
+
+button {
+    border: none;
+    background-color: #667eea;
+    color: white;
+    padding: 10px;
+    font-size: 32px;
+    border-radius: 10px;
+}
+
+.travel-item {
+    display: flex;
+    flex-direction: column;
+    font-size: large;
+    color: white;
+    font-weight: 800;
+    border-radius: 20px;
+    margin-top: 40px;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}

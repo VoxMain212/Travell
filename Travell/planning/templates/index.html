@@ -16,28 +16,51 @@
         </section>
     </div>
     <div id="block-planner">
+        <div>
         <h1>Создайте свой план путешествий</h1>
-        {% if travells %}
-            <div>
-
+        {% if travels %}
+            <div class="travel-list">
+                {% for travel in travels %}
+                <div class="travel-item">
+                    <div class="traver-title">
+                        {{ travel.title }}
+                    </div>
+                    <div class="travel-date">
+                        <div class="traver-in-date">
+                            {{ traver.date_in }}
+                        </div>
+                        <div class="traver-out-date">
+                            {{ travel.date_out }}
+                        </div>
+                    </div>
+                    <div class="travel-price">
+                        {{ travel.price }}
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         {% else %}
             <div>
                 У вас пока нет путешествий
             </div>
         {% endif %}
+        </div>
+        <div>
         <h1>Создайте свое путешествие</h1>
-        <form action="#">
-            <input type="text" placeholder="Название">
+        <form action="/" method="post" id="plan-trip">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <!-- <input type="text" placeholder="Название">
             <input type="text" placeholder="Пункт назначения">
             <label for="planner-data">Дата путешествия</label>
             <input name="planner-data" type="data">
             <label for="planner-price">Стоимость путешествия</label>
-            <input name="planner-price" type="number" min="0" placeholder="50000">
-            <button>
+            <input name="planner-price" type="number" min="0" placeholder="50000"> -->
+            <button type="submit">
                 Создайть путешествие
             </button>
         </form>
+        </div>
     </div>
 </main>
 {% endblock %}

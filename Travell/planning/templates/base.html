@@ -1,19 +1,26 @@
+{% load static %}
 <!DCCTYPE html>
 <html>
     <head>
+        <link rel="icon" href="{% static 'icon.ico' %}">
+        <title>TravelPlanner - Travell</title>
+        <link rel="stylesheet" href="{% static 'base.css' %}">
         {% block head %}
         {% endblock %}
     </head>
     <body>
         <nav>
-            <div id="brand-logo">
+            <div class="brand-logo">
 
             </div>
-            <div id="nav-links">
+            <div class="nav-links">
                 
             </div>
         </nav>
         {% block content %}
         {% endblock %}
+    <footer>
+        
+    </footer>
     </body>
 </html>
