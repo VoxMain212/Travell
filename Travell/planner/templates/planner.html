@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block header %}
+{% endblock %}
+{% block content %}
+<main class="planner-page" style="padding: 2rem 1rem; max-width: 1200px; margin: 0 auto;">
+
+  <!-- Заголовок страницы -->
+  <header style="margin-bottom: 2.5rem; text-align: center;">
+    <h1 style="font-size: 2rem; font-weight: 700; color: var(--color-primary); margin-bottom: 0.5rem;">
+      Создай своё путешествие
+    </h1>
+    <p style="color: var(--color-text-secondary); font-size: 1.1rem;">
+      Заполни форму — и мы соберём для тебя идеальный план поездки 🗺️
+    </p>
+  </header>
+
+  <!-- Форма создания нового путешествия -->
+  <section class="create-trip-form" style="background: var(--color-secondary); padding: 2rem; border-radius: 16px; margin-bottom: 3rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <h2 style="font-size: 1.5rem; color: var(--color-text); margin-bottom: 1.5rem;">Новое путешествие</h2>
+
+    <form method="post" style="display: grid; gap: 1.25rem;">
+    {% csrf_token %}
+    <div>
+        <label for="trip-title" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Название поездки</label>
+        <input name="title" type="text" id="trip-title" placeholder="Например: «Мечтаю в Токио»" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;">
+      </div>
+
+      <div>
+        <label for="trip-description" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Описание</label>
+        <textarea name="discription" id="trip-description" rows="3" placeholder="Расскажи, зачем едешь и что хочешь увидеть..." style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem; resize: vertical;"></textarea>
+      </div>
+
+      <div>
+        <label for="trip-country" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Страна</label>
+        <select name="country" id="trip-country" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;">
+          <option value="" disabled selected>Выбери страну</option>
+          {% for country_name, code in countries %}
+            <option value="{{ country_name }}">{{code}}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label for="trip-departure" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Дата вылета</label>
+          <input name="date_in" type="date" id="trip-departure" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text);">
+        </div>
+        <div>
+          <label for="trip-return" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Дата возвращения</label>
+          <input name="date_out" type="date" id="trip-return" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text);">
+        </div>
+      </div>
+
+      <div>
+        <label for="trip-budget" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Бюджет (в USD)</label>
+        <input name="price" type="number" id="trip-budget" placeholder="Например: 2500" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;">
+      </div>
+
+      <button type="submit" style="background: var(--color-accent); color: white; border: none; padding: 14px 32px; font-size: 1.1rem; border-radius: 50px; cursor: pointer; font-weight: 600; justify-self: start; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);">
+        🗺️ Создать путешествие
+      </button>
+    </form>
+  </section>
+
+  <!-- Список уже созданных путешествий -->
+  <section class="existing-trips" style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; color: var(--color-text); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-accent);">Твои путешествия</h2>
+
+    {% for trip in trips %}
+    <div class="trip-card">
+      <div>
+        <h3 style="margin: 0 0 0.25rem 0; font-size: 1.2rem; color: var(--color-primary);">{{ trip.title }}</h3>
+        <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.95rem;">{{ trip.country }} • ${{ trip.price }}</p>
+        <p style="margin: 0.5rem 0 0 0; color: var(--color-text); font-size: 0.9rem;">{{ trip.discription }}</p>
+      </div>
+      <div style="text-align: center; color: var(--color-text);">
+        <div style="font-weight: 600; font-size: 0.9rem;">Вылет</div>
+        <div>{{ trip.date_in }}</div>
+      </div>
+      <div style="text-align: center; color: var(--color-text);">
+        <div style="font-weight: 600; font-size: 0.9rem;">Возвращение</div>
+        <div>{{ trip.date_out }}</div>
+      </div>
+      <div style="text-align: right;">
+        <button style="background: var(--color-success); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; margin-bottom: 0.5rem;">✏️ Редактировать</button>
+        <button style="background: var(--color-accent-2); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer;">🗑️ Удалить</button>
+      </div>
+    </div>
+    {% endfor %}
+</main>
+{% endblock %}

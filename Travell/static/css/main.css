@@ -1,0 +1,130 @@
+/* Основные стили */
+@import url('base.css');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex-grow: 1;
+}
+
+header {
+    background-color: var(--color-secondary);
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+nav > ul {
+    display: flex;
+    flex-direction: row;
+}
+
+.logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+
+}
+
+.logo button {
+    margin-left: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav > ul > li {
+    padding: 10px;
+
+    margin-right: 10px;
+    list-style: none;
+    transition-duration: 0.8s;
+}
+
+nav> ul > li:hover {
+    transition-duration: 0.8s;
+    background-color: var(--color-accent);
+    
+}
+
+a {
+    text-decoration: none;
+    transition-duration: 0.8s;
+    color: var(--color-text);
+}
+nav > ul > li:hover > a {
+    transition-duration: 0.8s;
+    color: var(--color-bg)
+}
+
+footer {
+    text-align: center;
+    background-color: var(--color-secondary);
+}
+
+.plan-card img {
+    aspect-ratio: 3/2;
+    width: 100%;
+}
+
+.why-card {
+    background: var(--color-secondary);
+    padding: 2rem; 
+    border-radius: 16px; 
+    text-align: center; 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.why-card img {
+    aspect-ratio: 3/2;
+    width: 100%;
+}
+
+.trip-card {
+    background: var(--color-secondary); 
+    padding: 1.5rem; border-radius: 12px; 
+    margin-bottom: 1rem; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    display: grid; 
+    grid-template-columns: 3fr 1fr 1fr 1fr; 
+    gap: 1rem; 
+    align-items: center;
+}
+
+.theme-toggle-icon .sun {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.theme-toggle-icon .moon {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* В тёмной теме — скрываем солнце, показываем луну */
+[data-theme="dark"] .theme-toggle-icon .sun {
+  opacity: 0;
+}
+
+[data-theme="dark"] .theme-toggle-icon .moon {
+  opacity: 1;
+}

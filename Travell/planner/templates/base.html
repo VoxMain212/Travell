@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru" {% if theme == 'dark' %}data-theme="dark" {% endif %}>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Планировщик путешествий{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body class="{% if request.COOKIES.theme %}{{ request.COOKIES.theme }}{% else %}light-theme{% endif %}">
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{% url 'home' %}">🌍 Путешествия</a>
+                <button id="theme-toggle" style="background-color: #00000000; outline: 0; border: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="theme-toggle-icon" style="cursor: pointer; transition: all 0.3s ease;">
+                        <!-- Солнце (показывается в светлой теме) -->
+                        <circle cx="12" cy="12" r="5" class="sun" />
+                        <line x1="12" y1="1" x2="12" y2="3" class="sun-ray" />
+                        <line x1="12" y1="21" x2="12" y2="23" class="sun-ray" />
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" class="sun-ray" />
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" class="sun-ray" />
+                        <line x1="1" y1="12" x2="3" y2="12" class="sun-ray" />
+                        <line x1="21" y1="12" x2="23" y2="12" class="sun-ray" />
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" class="sun-ray" />
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" class="sun-ray" />
+
+                        <!-- Луна (показывается в тёмной теме) -->
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" class="moon"
+                            style="opacity: 0; transition: opacity 0.3s ease;" />
+                    </svg>
+                </button>
+            </div>
+            <ul>
+                <li><a href="{% url 'home' %}">Главная</a></li>
+                <li><a href="{% url 'planner' %}">Планировщик</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>2025 Планировщик путешествий.</p>
+    </footer>
+    <script>
+        // Установить куку с темой
+        function setThemeCookie(theme) {
+            document.cookie = `theme=${theme}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Получить тему из куки
+        function getThemeCookie() {
+            const name = "theme=";
+            const decodedCookie = decodeURIComponent(document.cookie);
+            const ca = decodedCookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i].trim();
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return null; // не найдено
+        }
+
+        // Применить тему при загрузке страницы
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = getThemeCookie();
+            const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            // Если тема не выбрана — используем системную
+            const themeToApply = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', themeToApply);
+        });
+
+        // Переключатель темы (если у тебя есть кнопка)
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setThemeCookie(newTheme);
+        });
+    </script>
+</body>
+
+</html>
