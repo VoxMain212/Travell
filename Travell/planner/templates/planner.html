@@ -49,6 +49,26 @@
           <label for="trip-return" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Дата возвращения</label>
           <input name="date_out" type="date" id="trip-return" style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text);">
         </div>
+        <div>
+          <fieldset style="display: flex; flex-direction: column; border: none;">
+            <div>
+              <input type="radio" name="export" value="json">
+              <label for="trip-export">Экспорт в json</label>
+            </div>
+            
+            <div>
+              <input type="radio" name="export" value="xml">
+              <label for="trip-export">Экспорт в xml</label>
+            </div>
+            
+            <div>
+              <input type="radio" name="export" value="none">
+              <label for="trip-export">Не экспортировать</label>
+            </div>
+            
+          </fieldset>
+          
+        </div>
       </div>
 
       <div>
