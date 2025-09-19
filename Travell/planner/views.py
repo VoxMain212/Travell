@@ -1,11 +1,13 @@
 from django.shortcuts import render, HttpResponse
-from .forms import TripForm, FileForm
+from .forms import TripForm, FileForm, resultForm
 from uuid import uuid4
 import os
 import json
 from xml.dom.minidom import parseString
 import dicttoxml
 import xml.etree.ElementTree as ET
+from .models import Trip
+
 
 def xml_string_to_dict(xml_str):
     def etree_to_dict(t):
@@ -67,22 +69,7 @@ COUNTRIES = {
 }
 
 created_trips = [
-{
-                'title': 'Мечтаю в Токио',
-                'discription': 'Хочу увидеть сакуру, попробовать рамен и прокатиться на синкансэне.',
-                'country': 'Япония',
-                'date_in': '15.04.2025',
-                'date_out': '25.04.2025',
-                'price': 2500
-            },
-            {
-                'title': 'Альпы и шоколад',
-                'discription': 'Горнолыжный отдых, сырные фондю и поезд Jungfraubahn.',
-                'country': 'Швейцария',
-                'date_in': '01.12.2025',
-                'date_out': '10.12.2025',
-                'price': 3200
-            }
+
 ]
 
 
@@ -124,8 +111,57 @@ def index(req):
 
 def planner(req):
     theme = req.COOKIES.get('theme', 'light')
+    ret_trips = created_trips
 
-    resp = render(req, 'planner.html', {'countries': COUNTRIES.items(), 'trips': created_trips, 'theme': theme})
+    if req.method == "POST":
+        if 'title' in req.POST:
+            form = TripForm(req.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                cleaned_data = {
+                    'title': data['title'],
+                    'discription': data['discription'],
+                    'country': data['country'],
+                    'date_in': data['date_in'].strftime('%d.%m.%Y'),
+                    'date_out': data['date_out'].strftime('%d.%m.%Y'),
+                    'price': data['price']
+                }
+                created_trips.append(cleaned_data)
+                if form.cleaned_data['export'] == 'json':
+                    http_response = HttpResponse(json.dumps(cleaned_data), content_type='application/json')
+                    http_response['Content-Disposition'] = f'attachment; filename="new_travel.json"'
+                    return http_response
+                elif form.cleaned_data['export'] == 'xml':
+                    http_response = HttpResponse(dict_to_xml_string(cleaned_data), content_type='application/xml')
+                    http_response['Content-Disposition'] = f'attachment; filename="new_travel.xml"'
+                    return http_response
+                elif form.cleaned_data['export'] == 'db':
+                    Trip.objects.create(**cleaned_data)
+        elif 'result_type' in req.POST:
+            form = resultForm(req.POST)
+            if form.is_valid():
+                res_type = form.cleaned_data['result_type']
+                if res_type == 'db':
+                    db_trips = []
+                    for trip in Trip.objects.all():
+                        getted_trip = {
+                            'title': trip.title,
+                            'discription': trip.discription,
+                            'country': trip.country,
+                            'date_in': trip.date_in,
+                            'date_out': trip.date_out,
+                            'price': trip.price
+                        }
+                        db_trips.append(getted_trip)
+                    ret_trips = db_trips
+                elif res_type == 'json':
+                    db_trips = []
+                    for file in os.listdir('travells'):
+                        with open(f'travells\\{file}', 'r', encoding='utf-8') as f:
+                            trip = json.load(f)
+                        db_trips.append(trip)
+                    ret_trips = db_trips
+    resp = render(req, 'planner.html', {'countries': COUNTRIES.items(), 'trips': ret_trips, 'theme': theme})
 
     if 'theme' not in req.COOKIES:
         resp.set_cookie(
@@ -135,27 +171,6 @@ def planner(req):
             samesite='Lax'
         )
 
-    if req.method == "POST":
-        form = TripForm(req.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            cleaned_data = {
-                'title': data['title'],
-                'discription': data['discription'],
-                'country': data['country'],
-                'date_in': data['date_in'].strftime('%d.%m.%Y'),
-                'date_out': data['date_out'].strftime('%d.%m.%Y'),
-                'price': data['price']
-            }
-            created_trips.append(cleaned_data)
-            if form.cleaned_data['export'] == 'json':
-                http_response = HttpResponse(json.dumps(cleaned_data), content_type='application/json')
-                http_response['Content-Disposition'] = f'attachment; filename="new_travel.json"'
-                return http_response
-            elif form.cleaned_data['export'] == 'xml':
-                http_response = HttpResponse(dict_to_xml_string(cleaned_data), content_type='application/xml')
-                http_response['Content-Disposition'] = f'attachment; filename="new_travel.xml"'
-                return http_response
     return resp
 
 

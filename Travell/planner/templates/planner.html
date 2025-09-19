@@ -65,9 +65,12 @@
               <input type="radio" name="export" value="none">
               <label for="trip-export">Не экспортировать</label>
             </div>
-            
+
+            <div>
+              <input type="radio" name="export" value="db">
+              <label for="trip-export">Запись в бд</label>
+            </div>
           </fieldset>
-          
         </div>
       </div>
 
@@ -85,7 +88,24 @@
   <!-- Список уже созданных путешествий -->
   <section class="existing-trips" style="margin-bottom: 3rem;">
     <h2 style="font-size: 1.5rem; color: var(--color-text); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-accent);">Твои путешествия</h2>
-
+    <form action="" method="post" style="display: flex; flex-direction: row;">
+      {% csrf_token %}
+      <input type="text" name="search">
+      <fieldset>
+        <div>
+          <input type="radio" value="json" name="result_type">
+          <label for="" >из XML/JSON</label>
+        </div>
+        <div>
+          <input type="radio" value="db" name="result_type">
+          <label for="">из БД</label>
+        </div>
+      </fieldset>
+      <button type="submit">
+        Поиск
+      </button>
+    </form>
+    
     {% for trip in trips %}
     <div class="trip-card">
       <div>

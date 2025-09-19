@@ -11,5 +11,9 @@ class TripForm(forms.Form):
     price = forms.IntegerField()
 
 
+class resultForm(forms.Form):
+    result_type = forms.CharField()
+
+
 class FileForm(forms.Form):
     file = forms.FileField()
