@@ -12,6 +12,7 @@ class TripForm(forms.Form):
 
 
 class resultForm(forms.Form):
+    search = forms.CharField()
     result_type = forms.CharField()
 
 

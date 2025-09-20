@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="edit-trip-page" style="padding: 2rem 1rem; max-width: 900px; margin: 0 auto;">
+
+  <!-- Заголовок -->
+  <header style="text-align: center; margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2rem; font-weight: 700; color: var(--color-primary); margin-bottom: 0.5rem;">
+      Редактировать путешествие
+    </h1>
+    <p style="color: var(--color-text-secondary); font-size: 1.1rem;">
+      Внеси изменения — и твой план снова идеален ✨
+    </p>
+  </header>
+
+  <!-- Форма редактирования -->
+  <section class="edit-form-section" style="background: var(--color-secondary); padding: 2.5rem; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+    <form method="post" style="display: grid; gap: 1.5rem;">
+      {% csrf_token %}
+      <input type="hidden" name="trip_id" value="{{ trip.id }}">
+      <div>
+        <label for="edit-title" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Название поездки</label>
+        <input 
+          type="text" 
+          id="edit-title" 
+          name="title" 
+          value="{{ trip.title }}" 
+          style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;">
+      </div>
+
+      <div>
+        <label for="edit-description" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Описание</label>
+        <textarea 
+          id="edit-description" 
+          name="discription" 
+          rows="4" 
+          style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem; resize: vertical;"
+        >{{ trip.discription }}</textarea>
+      </div>
+
+      <div>
+        <label for="edit-country" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Страна</label>
+        <select 
+          id="edit-country" 
+          name="country" 
+          style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;"
+        >
+          <option value="japan">Япония</option>
+          <option value="italy">Италия</option>
+          <option value="thailand">Таиланд</option>
+          <option value="iceland">Исландия</option>
+          <option value="mexico">Мексика</option>
+          <option value="new-zealand">Новая Зеландия</option>
+          <option value="egypt">Египет</option>
+          <option value="brazil">Бразилия</option>
+          <option value="greece">Греция</option>
+          <option value="switzerland">Швейцария</option>
+        </select>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label for="edit-departure" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Дата вылета</label>
+          <input 
+            type="date" 
+            id="edit-departure" 
+            name="date_in" 
+            value="{{ trip.date_in }}" 
+            style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text);">
+        </div>
+        <div>
+          <label for="edit-return" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Дата возвращения</label>
+          <input 
+            type="date" 
+            id="edit-return" 
+            name="date_out"
+            value="" 
+            style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text);">
+        </div>
+      </div>
+
+      <div>
+        <label for="edit-budget" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-text);">Бюджет (в USD)</label>
+        <input 
+          type="number" 
+          id="edit-budget" 
+          name="price" 
+          value="{{ trip.price }}" 
+          style="width: 100%; padding: 12px; border: 1px solid var(--color-text-secondary); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font-size: 1rem;">
+      </div>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <button type="submit" style="background: var(--color-accent); color: white; border: none; padding: 14px 32px; font-size: 1.1rem; border-radius: 50px; cursor: pointer; font-weight: 600; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); display: flex; align-items: center; gap: 8px;">
+          💾 Сохранить изменения
+        </button>
+        <a href="{% url 'planner' %}" style="background: var(--color-text-secondary); color: var(--color-text); text-decoration: none; padding: 14px 32px; font-size: 1.1rem; border-radius: 50px; display: flex; align-items: center; gap: 8px; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+          🚫 Отмена
+        </a>
+      </div>
+    </form>
+  </section>
+
+  <!-- Подсказка (опционально) -->
+  <section class="tip-section" style="margin-top: 2rem; padding: 1.25rem; background: var(--color-bg); border-radius: 12px; border-left: 4px solid var(--color-accent); color: var(--color-text);">
+    <p style="margin: 0; font-size: 0.95rem;">
+      💡 Совет: не забудь проверить даты и бюджет — особенно если курс валют изменился!
+    </p>
+  </section>
+
+</main>
+<script>
+  let country_edit = document.querySelector('#edit-country')
+  let options = country_edit.querySelectorAll('option')
+  options.forEach(element => {
+    console.log(element.value)
+    if (element.value == '{{ trip.country }}') {
+      element.setAttribute('selected', null)
+    }
+  });
+  if ('.' in '{{ trip.date_in }}') {
+    let date_in = '{{ trip.date_in }}'.split(".")
+    date_in = `${date_in[2]}-${date_in[1]}-${date_in[0]}`
+    let date_in_input = document.querySelector("#edit-departure")
+    date_in_input.value = date_in
+  }
+  if ('.' in '{{ trip.date_out }}') {
+    let date_out = '{{ trip.date_out }}'.split(".")
+    date_out = `${date_out[2]}-${date_out[1]}-${date_out[0]}`
+    let date_out_input = document.querySelector("#edit-return")
+    date_out_input.value = date_out
+  }
+</script>
+{% endblock %}

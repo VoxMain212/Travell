@@ -1,0 +1,61 @@
+{% for trip in trips %}
+<div class="trip-card" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; align-items: center; padding: 1.5rem; background: var(--color-bg); border-radius: 12px; margin-bottom: 1rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+  <div>
+    <h3 style="margin: 0 0 0.25rem 0; font-size: 1.2rem; color: var(--color-primary);">{{ trip.title }}</h3>
+    <p style="margin: 0; color: var(--color-text-secondary); font-size: 0.95rem;">{{ trip.country }} • ${{ trip.price }}</p>
+    <p style="margin: 0.5rem 0 0 0; color: var(--color-text); font-size: 0.9rem;">{{ trip.discription }}</p>
+  </div>
+  <div style="text-align: center; color: var(--color-text);">
+    <div style="font-weight: 600; font-size: 0.9rem;">Вылет</div>
+    <div>{{ trip.date_in }}</div>
+  </div>
+  <div style="text-align: center; color: var(--color-text);">
+    <div style="font-weight: 600; font-size: 0.9rem;">Возвращение</div>
+    <div>{{ trip.date_out }}</div>
+  </div>
+  <div style="text-align: right;">
+    <a href="{% url 'change_travel' trip.id %}"><button style="background: var(--color-success); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer; margin-bottom: 0.5rem;">✏️ Редактировать</button></a>
+    <button style="background: var(--color-accent-2); color: white; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; cursor: pointer;" onclick="delete_travel('{{ trip.id | escapejs }}')">🗑️ Удалить</button>
+  </div>
+</div>
+{% empty %}
+<div style="padding: 2rem; text-align: center; color: var(--color-text-secondary);">
+  🕵️‍♂️ Ничего не найдено по запросу "{{ request.POST.search }}"
+</div>
+{% endfor %}
+<script>
+  async function delete_travel(travel_id) {
+    let formData = new FormData()
+    formData.append('travel_id', String(travel_id))
+    console.log(travel_id)
+
+    const response = await fetch("{% url 'delete_travel' %}", {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+          }})
+
+    let result = await response.json()
+    if (result['status'] == 'deleted') {
+      window.location.reload()
+    }
+    else {
+      console.log(result)
+    }
+  }
+  function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+</script>

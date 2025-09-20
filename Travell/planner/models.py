@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Trip(models.Model):
+    id = models.CharField('id', primary_key=True)
     title = models.CharField(verbose_name='Название', max_length=150)
     discription = models.TextField('Описание')
     country = models.CharField('Страна', max_length=150)
