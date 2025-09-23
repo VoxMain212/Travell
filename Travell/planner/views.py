@@ -137,10 +137,12 @@ def planner(req):
                     }
                     created_trips.setdefault(cleaned_data['id'], cleaned_data)
                     if form.cleaned_data['export'] == 'json':
+                        add_travell(cleaned_data)
                         http_response = HttpResponse(json.dumps(cleaned_data), content_type='application/json')
                         http_response['Content-Disposition'] = f'attachment; filename="new_travel.json"'
                         return http_response
                     elif form.cleaned_data['export'] == 'xml':
+                        add_travell(cleaned_data)
                         http_response = HttpResponse(dict_to_xml_string(cleaned_data), content_type='application/xml')
                         http_response['Content-Disposition'] = f'attachment; filename="new_travel.xml"'
                         return http_response

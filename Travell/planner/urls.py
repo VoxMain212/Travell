@@ -10,5 +10,5 @@ urlpatterns = [
     path('download_xml', download_and_save_xml, name='download_xml'),
     path('ajax/search-trips/', ajax_search_trips, name='ajax_search_trips'),
     path('delete_travel', delete_travel, name='delete_travel'),
-    path('change_travel/<int:travel_id>/', change_travel, name='change_travel')
+    path('change_travel/<slug:travel_id>/', change_travel, name='change_travel')
 ]
