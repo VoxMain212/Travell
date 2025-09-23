@@ -133,7 +133,7 @@ def planner(req):
                         'country': data['country'],
                         'date_in': data['date_in'].strftime('%d.%m.%Y'),
                         'date_out': data['date_out'].strftime('%d.%m.%Y'),
-                        'price': data['price']
+                        'price': int(data['price'])
                     }
                     created_trips.setdefault(cleaned_data['id'], cleaned_data)
                     if form.cleaned_data['export'] == 'json':
@@ -146,7 +146,9 @@ def planner(req):
                         return http_response
                     elif form.cleaned_data['export'] == 'db':
                         if not Trip.objects.filter(title=form.cleaned_data['title']).exists():
-                            Trip.objects.create(**cleaned_data)
+                            print(cleaned_data)
+                            trip = Trip(**cleaned_data)
+                            trip.save()
         elif 'result_type' in req.POST:
             form = resultForm(req.POST)
             if form.is_valid():
@@ -161,7 +163,7 @@ def planner(req):
                             'country': trip.country,
                             'date_in': trip.date_in,
                             'date_out': trip.date_out,
-                            'price': trip.price
+                            'price': int(trip.price)
                         }
                         db_trips.append(getted_trip)
                     ret_trips = db_trips

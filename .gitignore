@@ -3,6 +3,7 @@ travells/
 __pycache__/
 *.py[cod]
 *$py.class
+migrations/
 
 # C extensions
 *.so
