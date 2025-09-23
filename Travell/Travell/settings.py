@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-e9f*)b5zs-2cc4(#i53-(fv_bm&^626s$4d9btdbcqt9w(h-z$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'voxmain.pythonanywhere.com',
+    'www.voxmain.pythonanywhere.com',  # если нужно
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition

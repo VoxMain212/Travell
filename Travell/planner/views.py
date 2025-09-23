@@ -115,7 +115,9 @@ def index(req):
 
 def planner(req):
     theme = req.COOKIES.get('theme', 'light')
-    ret_trips = created_trips.values()
+    ret_trips = []
+    ret_trips.extend(created_trips.values())
+    ret_trips.extend(Trip.objects.all())
 
     if req.method == "POST":
         if 'title' in req.POST:
