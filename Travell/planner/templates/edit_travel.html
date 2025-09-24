@@ -111,22 +111,31 @@
   let country_edit = document.querySelector('#edit-country')
   let options = country_edit.querySelectorAll('option')
   options.forEach(element => {
-    console.log(element.value)
     if (element.value == '{{ trip.country }}') {
       element.setAttribute('selected', null)
     }
   });
-  if ('.' in '{{ trip.date_in }}') {
+  console.log('{{trip.date_in}}')
+  if ('{{ trip.date_in }}'.includes('.')) {
     let date_in = '{{ trip.date_in }}'.split(".")
     date_in = `${date_in[2]}-${date_in[1]}-${date_in[0]}`
+    console.log(date_in)
     let date_in_input = document.querySelector("#edit-departure")
     date_in_input.value = date_in
   }
-  if ('.' in '{{ trip.date_out }}') {
+  else {
+    let date_in_input = document.querySelector("#edit-departure")
+    date_in_input.value = '{{ trip.date_in }}'
+  }
+  if ('{{ trip.date_out }}'.includes('.')) {
     let date_out = '{{ trip.date_out }}'.split(".")
     date_out = `${date_out[2]}-${date_out[1]}-${date_out[0]}`
     let date_out_input = document.querySelector("#edit-return")
     date_out_input.value = date_out
+  }
+  else {
+    let date_out_input = document.querySelector("#edit-return")
+    date_out_input.value = '{{ trip.date_out }}'
   }
 </script>
 {% endblock %}
