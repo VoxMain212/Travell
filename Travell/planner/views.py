@@ -76,9 +76,10 @@ created_trips = {
 }
 
 def add_travell(travel_info: dict):
-    travel_info['id'] = uuid4().hex
+    if not('id' in travel_info.keys()):
+        travel_info['id'] = uuid4().hex
     print(travel_info)
-    with open(f'travells\\{uuid4().hex}', 'w', encoding='utf-8') as f:
+    with open(os.path.join('travells', uuid4().hex), 'w', encoding='utf-8') as f:
         json.dump(travel_info, f)
     created_trips.setdefault(travel_info['id'], travel_info)
 
@@ -87,7 +88,7 @@ def load_travells():
     if not os.path.exists('travells'):
         return
     for file in os.listdir('travells'):
-        with open(f'travells\\{file}', 'r', encoding='utf-8') as f:
+        with open(os.path.join('travells', file), 'r', encoding='utf-8') as f:
             data = json.load(f)
         data['id'] = file
         created_trips.setdefault(file, data)
@@ -209,8 +210,8 @@ def exporter(req):
                         break
                 if f:
                     g = 1
-                    for travel in created_trips:
-                        g *= not data['title'] == travel['title']
+                    for travel in created_trips.values():
+                        g *= not (data['title'] == travel['title'])
                     if g:
                         add_travell(data)
             elif str(file).endswith('.xml'):
@@ -276,9 +277,7 @@ def ajax_search_trips(request):
             })
 
     elif result_type == 'json':
-        for file in os.listdir('travells'):
-            with open(f'travells\\{file}', 'r', encoding='utf-8') as f:
-                trip = json.load(f)
+        for trip in created_trips.values():
             if search_query:
                 if (
                     search_query.lower() in trip.get('title', '').lower() or
@@ -308,9 +307,7 @@ def ajax_search_trips(request):
                 'date_out': trip.date_out,
                 'price': trip.price
             })
-        for file in os.listdir('travells'):
-            with open(f'travells\\{file}', 'r', encoding='utf-8') as f:
-                trip = json.load(f)
+        for trip in created_trips.values():
             if search_query:
                 if (
                     search_query.lower() in trip.get('title', '').lower() or
@@ -338,7 +335,7 @@ def delete_travel(request):
         return JsonResponse({
             'status': 'deleted'
         })
-    elif os.path.exists(f'travells\\{travel_id}'):
+    elif os.path.exists(os.path.join('travells', str(travel_id))):
         file_path = os.path.join('travells', str(travel_id))
         os.remove(file_path)
         del created_trips[travel_id]
