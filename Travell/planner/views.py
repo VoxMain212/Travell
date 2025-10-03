@@ -195,45 +195,29 @@ def planner(req):
 def exporter(req):
     if req.method == "POST":
         form = FileForm(req.POST, req.FILES)
-
         if form.is_valid():
             file = req.FILES['file']
             content = file.read()
-            print(str(file))
-            if str(file).endswith('.json'):
-                data: dict = json.loads(content)
-                fields = ['title', 'discription', 'country', 'date_in', 'date_out', 'price']
-                f = 1
-                for field in fields:
-                    f *= field in data.keys()
-                    if not f:
-                        break
-                if f:
-                    g = 1
-                    for travel in created_trips.values():
-                        g *= not (data['title'] == travel['title'])
-                    if g:
-                        add_travell(data)
-            elif str(file).endswith('.xml'):
-                data = xml_string_to_dict(content)['root']
-                fields = ['title', 'discription', 'country', 'date_in', 'date_out', 'price']
-                f = 1
-                for field in fields:
-                    f *= field in data.keys()
-                    if not f:
-                        print(data)
-                        print(field)
-                        break
+            filename = file.name  # ← используем file.name
 
-                print(f"f = {f}")
-                if f:
-                    g = 1
-                    for travel in created_trips:
-                        g *= not data['title'] == travel['title']
-                    if g:
-                        add_travell(data)
+            if filename.endswith('.json'):
+                try:
+                    data = json.loads(content)
+                except json.JSONDecodeError:
+                    return HttpResponse("Invalid JSON", status=400)
+                fields = ['title', 'discription', 'country', 'date_in', 'date_out', 'price']
+                if all(field in data for field in fields):
+                    add_travell(data)
+            elif filename.endswith('.xml'):
+                try:
+                    data = xml_string_to_dict(content)['root']
+                except Exception:
+                    return HttpResponse("Invalid XML", status=400)
+                fields = ['title', 'discription', 'country', 'date_in', 'date_out', 'price']
+                if all(field in data for field in fields):
+                    add_travell(data)
         else:
-            return HttpResponse("Error")
+            return HttpResponse("Invalid form", status=400)
     return render(req, 'exporter.html')
 
 def download_and_save_json(request):
@@ -326,50 +310,51 @@ def ajax_search_trips(request):
 
 @require_POST
 def delete_travel(request):
-    print(created_trips)
     travel_id = request.POST.get('travel_id')
 
+    # Удаление из БД
     if Trip.objects.filter(id=travel_id).exists():
         Trip.objects.get(id=travel_id).delete()
-        print(Trip.objects.all().values())
-        return JsonResponse({
-            'status': 'deleted'
-        })
-    elif os.path.exists(os.path.join('travells', str(travel_id))):
-        file_path = os.path.join('travells', str(travel_id))
+        return JsonResponse({'status': 'deleted'})
+
+    # Удаление из файлов (JSON/XML)
+    file_path = os.path.join('travells', travel_id)
+    if os.path.exists(file_path):
         os.remove(file_path)
-        del created_trips[travel_id]
-        return JsonResponse({
-            'status': 'deleted'
-        })
-    else:
-        return JsonResponse({
-            'status': 'not exists'
-        })
+        # Удаляем из created_trips, если есть
+        if travel_id in created_trips:
+            del created_trips[travel_id]
+        return JsonResponse({'status': 'deleted'})
+
+    return JsonResponse({'status': 'not exists'})
 
 
 def change_travel(req, travel_id):
     if req.method == 'POST':
-        print(req.POST)
         trip = Trip.objects.get(id=req.POST.get('trip_id'))
+        # Обновляем поля только если они изменились
         if trip.title != req.POST.get('title'):
             trip.title = req.POST.get('title')
-        if trip.discription != req.POST.get('discription').strip() and req.POST.get('discription').strip() != "":
+        if req.POST.get('discription').strip() and trip.discription != req.POST.get('discription').strip():
             trip.discription = req.POST.get('discription').strip()
         if trip.country != req.POST.get('country'):
             trip.country = req.POST.get('country')
-        if '-' in req.POST.get('date_in'):
-            new_date_in = req.POST.get('date_in').split('-')
-            new_date_in = f'{new_date_in[2]}.{new_date_in[1]}.{new_date_in[0]}'
-        if trip.date_in != new_date_in:
-            trip.date_in = new_date_in
-        if '-' in req.POST.get('date_out'):
-            new_date_out = req.POST.get('date_out').split('-')
-            new_date_out = f'{new_date_out[2]}.{new_date_out[1]}.{new_date_out[0]}'
-        if trip.date_out != new_date_out:
-            trip.date_out = new_date_out
-        if trip.price != req.POST.get('price'):
-            trip.price = req.POST.get('price')
+        # Обработка даты прилета
+        date_in_str = req.POST.get('date_in')
+        if date_in_str and '-' in date_in_str:
+            parts = date_in_str.split('-')
+            new_date_in = f'{parts[2]}.{parts[1]}.{parts[0]}'
+            if trip.date_in != new_date_in:
+                trip.date_in = new_date_in
+        # Обработка даты вылета
+        date_out_str = req.POST.get('date_out')
+        if date_out_str and '-' in date_out_str:
+            parts = date_out_str.split('-')
+            new_date_out = f'{parts[2]}.{parts[1]}.{parts[0]}'
+            if trip.date_out != new_date_out:
+                trip.date_out = new_date_out
+        if trip.price != int(req.POST.get('price')):
+            trip.price = int(req.POST.get('price'))
         trip.save()
     if Trip.objects.filter(id=travel_id).exists():
         trip = Trip.objects.get(id=travel_id)
